@@ -1,19 +1,20 @@
-package org.example.lab2;
-import java.io.*;
-import java.util.Scanner;
-import java.util.ArrayList;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Collections;
-
-
+package com.example.usersgui;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 class User{
     public static final int MAX_EMAIL_LENGTH    = 50;
     public static final int MAX_PASSWORD_LENGTH = 12;
     public static final int MIN_PASSWORD_LENGTH = 8;
+
     private final String user_email;
     private final String user_password;
+
+    private int numberOfWrongTries = 0;
+    private boolean isBlocked = false;
+    private long timeOfBlock = 0;
+    private Lock lock = new ReentrantLock();
+
     public User(String user_email, String user_password){
         checkUsername(user_email);
         checkPassword(user_password);
@@ -83,8 +84,77 @@ class User{
     public String toString(){
         return this.user_email + " " + this.user_password;
     }
-    public String getPassword()
-    {
-        return this.user_password;
+
+    public boolean checkPasswordValidity(String pass){
+        if(this.user_password.equals(pass))
+            return true;
+        else {
+            return false;
+        }
+    }
+
+    public void WrongTriesAddition(){
+        lock.lock();
+        try{
+            numberOfWrongTries++;
+        }
+        finally {
+            lock.unlock();
+        }
+    }
+
+    public int getNumberOfWrongTries() {
+        lock.lock();
+        try{
+            return numberOfWrongTries;
+        }
+        finally {
+            lock.unlock();
+        }
+    }
+
+    public boolean getIsBlocked() {
+        lock.lock();
+        boolean blocked;
+        try{
+            blocked = this.isBlocked;
+        }
+        finally {
+            lock.unlock();
+        }
+        return blocked;
+    }
+
+    public void BlockUser() {
+        lock.lock();
+        try{
+            this.isBlocked = true;
+            this.timeOfBlock = System.currentTimeMillis();
+        }
+        finally {
+            lock.unlock();
+        }
+    }
+
+    public void resetState() {
+        lock.lock();
+        try{
+            this.isBlocked = false;
+            this.numberOfWrongTries = 0;
+            this.timeOfBlock = 0;
+        }
+        finally{
+            lock.unlock();
+        }
+    }
+
+    public long getTimeOfBlock() {
+        lock.lock();
+        try{
+            return timeOfBlock;
+        }
+        finally{
+            lock.unlock();
+        }
     }
 }
