@@ -11,6 +11,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 
 public class LoginController
 {
@@ -20,13 +22,19 @@ public class LoginController
     private UsersApp usersApp;
     private String username;
     private String password;
-    public static final int n = 5;
-    public static final int t = 20;
+    public static int n;
+    public static int t;
 
     public LoginController() {
         usersApp = new UsersApp(n,t);
         usersApp.run();
     }
+
+    public static void setParameters(int n1, int t1) {
+        n = n1;
+        t = t1;
+    }
+
     @FXML public void onLoginButtonClick() throws IOException {
         if(usernameField.getText().isEmpty() || passwordField.getText().isEmpty())
             loginLabel.setText("Please enter valid username and password");
@@ -40,9 +48,11 @@ public class LoginController
             {
                 if(usersApp.getUserIsBlocked(username))
                 {
-                    long blockageEndTime = usersApp.getUserTimeOfBlock(username) + t*1000L;
-                    Instant instant = Instant.ofEpochMilli(blockageEndTime);
-                    String formatted = Instant.ofEpochMilli(blockageEndTime).atZone(ZoneId.systemDefault()).toLocalDateTime().toString();
+                    long blockageEndTime = usersApp.getUserTimeOfBlock(username) + t * 1000L;
+                    String formatted = Instant.ofEpochMilli(blockageEndTime)
+                            .atZone(ZoneId.systemDefault())
+                            .format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
                     loginLabel.setText("Too many tries. User is blocked, try again at " + formatted);
                 }
                 else
@@ -66,10 +76,12 @@ public class LoginController
                 }
                 else
                 {
-                    long blockageEndTime = usersApp.getUserTimeOfBlock(username) + t*1000L;
-                    Instant instant = Instant.ofEpochMilli(blockageEndTime);
-                    String formatted = Instant.ofEpochMilli(blockageEndTime).atZone(ZoneId.systemDefault()).toLocalDateTime().toString();
-                    loginLabel.setText("Too many tries. User is blocked, try again at " + formatted);
+                    long blockageEndTime = usersApp.getUserTimeOfBlock(username) + t * 1000L;
+                    String formatted = Instant.ofEpochMilli(blockageEndTime)
+                            .atZone(ZoneId.systemDefault())
+                            .format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
+                    loginLabel.setText("Too many tries. User is blocked. Try again at " + formatted);
                 }
             }
         }

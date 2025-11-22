@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 public class LoginApplication extends Application {
     @Override
@@ -18,6 +19,12 @@ public class LoginApplication extends Application {
         stage.show();
     }
     public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter n: ");
+        int n = sc.nextInt();
+        System.out.print("Enter t: ");
+        int t = sc.nextInt();
+        LoginController.setParameters(n, t);
         launch();
     }
 }

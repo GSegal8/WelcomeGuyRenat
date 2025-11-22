@@ -77,7 +77,7 @@ public class UsersApp
                 else
                 {
                     temp.WrongTriesAddition();
-                    if(temp.getNumberOfWrongTries()>=numberOfTriesAllowed) {
+                    if(temp.getNumberOfWrongTries()>=numberOfTriesAllowed && !temp.getIsBlocked()) {
                         Thread t = new Thread(new BlockUserRunnable(temp, timeBlocked));
                         t.start();
                     }
